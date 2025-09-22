@@ -1,5 +1,8 @@
 package translation;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -41,6 +44,12 @@ public class CountryCodeConverter {
             while (iterator.hasNext()) {
                 String line = iterator.next();
                 String[] parts = line.split("\t");
+                String country_name = parts[0];
+                String dubcode = parts[1];
+                String tripcode= parts[2];
+                countryCodeToCountry.put(tripcode, country_name);
+
+
                 // TODO Task B: use parts to populate the instance variables
             }
         }
