@@ -47,7 +47,6 @@ public class CountryCodeConverter {
                 countryCodeToCountry.put(tripcode, country_name);
                 countryToCountryCode.put(country_name, tripcode);
 
-                // TODO Task B: use parts to populate the instance variables
             }
         }
         catch (IOException | URISyntaxException ex) {
