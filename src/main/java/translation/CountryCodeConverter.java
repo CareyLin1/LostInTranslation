@@ -1,8 +1,5 @@
 package translation;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -48,7 +45,7 @@ public class CountryCodeConverter {
                 String dubcode = parts[1];
                 String tripcode= parts[2];
                 countryCodeToCountry.put(tripcode, country_name);
-
+                countryToCountryCode.put(country_name, tripcode);
 
                 // TODO Task B: use parts to populate the instance variables
             }
@@ -65,7 +62,7 @@ public class CountryCodeConverter {
      * @return the name of the country corresponding to the code
      */
     public String fromCountryCode(String code) {
-        // TODO Task B: update this code to use an instance variable to return the correct value
+        code = countryCodeToCountry.get(code.toUpperCase());
         return code;
     }
 
@@ -75,7 +72,7 @@ public class CountryCodeConverter {
      * @return the 3-letter code of the country
      */
     public String fromCountry(String country) {
-        // TODO Task B: update this code to use an instance variable to return the correct value
+        country = countryToCountryCode.get(country.toUpperCase());
         return country;
     }
 
@@ -84,7 +81,6 @@ public class CountryCodeConverter {
      * @return how many countries are included in this country code converter.
      */
     public int getNumCountries() {
-        // TODO Task B: update this code to use an instance variable to return the correct value
-        return 0;
+        return countryCodeToCountry.size();
     }
 }
