@@ -71,7 +71,7 @@ public class CountryCodeConverter {
      * @return the 3-letter code of the country
      */
     public String fromCountry(String country) {
-        country = countryToCountryCode.get(country.toUpperCase());
+        country = countryToCountryCode.get(country);
         return country;
     }
 

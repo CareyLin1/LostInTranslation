@@ -1,14 +1,10 @@
 package translation;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
 
-
-// TODO Task D: Update the GUI for the program to align with UI shown in the README example.
-//            Currently, the program only uses the CanadaTranslator and the user has
-//            to manually enter the language code they want to use for the translation.
-//            See the examples package for some code snippets that may be useful when updating
-//            the GUI.
 public class GUI {
 
     public static void main(String[] args) {
@@ -16,21 +12,35 @@ public class GUI {
             Translator translator = new JSONTranslator("sample.json");
             JPanel countryPanel = new JPanel();
             countryPanel.add(new JLabel("Country:"));
+            LanguageCodeConverter languageCodeConverter = new LanguageCodeConverter();
+            CountryCodeConverter countryCodeConverter = new CountryCodeConverter();
 
             JComboBox<String> countryBox = new JComboBox<>();
             for (String code : translator.getCountryCodes()) {
-                countryBox.addItem(code);
+                countryBox.addItem(countryCodeConverter.fromCountryCode(code));
             }
             countryPanel.add(countryBox);
 
             JPanel languagePanel = new JPanel();
-            JTextField languageField = new JTextField(10);
+
             languagePanel.add(new JLabel("Language:"));
-            languagePanel.add(languageField);
+            String[] items = new String[translator.getLanguageCodes().size()];
+            JComboBox<String> languageComboBox = new JComboBox<>();
+            int i = 0;
+            for(String langaugeCode : translator.getLanguageCodes()) {
+                items[i++] = languageCodeConverter.fromLanguageCode(langaugeCode);
+            }
+
+            // create the JList with the array of strings and set it to allow multiple
+            // items to be selected at once.
+            JList<String> list = new JList<>(items);
+            list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+            // place the JList in a scroll pane so that it is scrollable in the UI
+            JScrollPane scrollPane = new JScrollPane(list);
+            languagePanel.add(scrollPane, 1);
 
             JPanel buttonPanel = new JPanel();
-            JButton submit = new JButton("Submit");
-            buttonPanel.add(submit);
 
             JLabel resultLabelText = new JLabel("Translation:");
             buttonPanel.add(resultLabelText);
@@ -39,17 +49,17 @@ public class GUI {
 
 
             // adding listener for when the user clicks the submit button
-            submit.addActionListener(new ActionListener() {
+            countryBox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    String language = languageField.getText();
+                    String language = list.getModel().getElementAt(list.getSelectedIndex());
                     String country = countryBox.getSelectedItem().toString();
 
                     // for now, just using our simple translator, but
                     // we'll need to use the real JSON version later.
                     Translator translator = new JSONTranslator("sample.json");
 
-                    String result = translator.translate(country, language);
+                    String result = translator.translate(countryCodeConverter.fromCountry(country).toLowerCase(), languageCodeConverter.fromLanguage(language));
                     if (result == null) {
                         result = "no translation found!";
                     }
@@ -58,6 +68,24 @@ public class GUI {
                 }
 
             });
+            list.addListSelectionListener(new ListSelectionListener(){
+                @Override
+                public void valueChanged(ListSelectionEvent e) {
+                    String language = list.getModel().getElementAt(list.getSelectedIndex());
+                    String country = countryBox.getSelectedItem().toString();
+
+                    // for now, just using our simple translator, but
+                    // we'll need to use the real JSON version later.
+                    Translator translator = new JSONTranslator("sample.json");
+
+                    String result = translator.translate(countryCodeConverter.fromCountry(country).toLowerCase(), languageCodeConverter.fromLanguage(language));
+                    if (result == null) {
+                        result = "no translation found!";
+                    }
+                    resultLabel.setText(result);
+                }
+            });
+
 
             JPanel mainPanel = new JPanel();
             mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
